@@ -1,12 +1,25 @@
-import React from 'react';
-import {Col, Row, Container} from 'reactstrap';
+import React,{Component} from 'react';
+import {Col, Row, Container,Button} from 'reactstrap';
 import Header from '../header';
 import RandomChar from '../randomChar';
 import ItemList from '../itemList';
 import CharDetails from '../charDetails';
 
 
-const App = () => {
+export default class App extends Component {
+    state = {
+        random:true
+    }
+    onClick=() =>{
+        const newran = !this.state.random;
+        this.setState({
+            random:newran
+        });
+    }
+
+    render = () => {
+        const ranchar = this.state.random ? <RanChar/>: null; 
+        // console.log(ranchar)
     return (
         <> 
             <Container>
@@ -14,9 +27,13 @@ const App = () => {
             </Container>
             <Container>
                 <Row>
-                    <Col lg={{size: 5, offset: 0}}>
-                        <RandomChar/>
-                    </Col>
+                    {ranchar}
+                    <Button outline
+                         color="link" 
+                         className = 'random-block' 
+                         onClick = {this.onClick}>
+                    Выключить/<br></br>Включить
+                    </Button>
                 </Row>
                 <Row>
                     <Col md='6'>
@@ -29,6 +46,13 @@ const App = () => {
             </Container>
         </>
     );
-};
 
-export default App;
+    }
+};
+const RanChar = ()=>{
+    return(
+        <Col lg={{size: 5, offset: 0}}>
+            <RandomChar/>
+        </Col>
+    )
+}
