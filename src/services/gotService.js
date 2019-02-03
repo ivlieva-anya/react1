@@ -2,7 +2,7 @@ export default class GotService {
     constructor() {
         this._apiBase = 'https://www.anapioficeandfire.com/api';
     }
-    async getResource (url){
+    getResource = async (url)=>{
         const res = await fetch(`${this._apiBase}${url}`);
         if (!res.ok) {
             // throw res.status;
@@ -10,57 +10,71 @@ export default class GotService {
         }
         return await res.json();
     };
-    async getAllCharacters(){
+    getAllCharacters = async () => {
         const rez = await this.getResource("/characters?page=5&pageSize=10");
         return rez.map(this._transformCaracter)
     }
-    async getAllBooks(){
+    getAllBooks = async()=>{
         const rez = await this.getResource("/books");
         return rez.map(this._transformBook)
     }
-    async getAllHouses(){
+    getAllHouses = async()=>{
         const rez = await this.getResource("/houses?page=5&pageSize=10");
         return rez.map(this._transformHouses)
     }
 
-    async getCharacter(id){
+    getCharacter = async(id)=>{
         const rez = await this.getResource(`/characters/${id}`);
         return this._transformCaracter(rez);
     }
-    async getBooks(id){
+    getBooks =  async(id)=>{
         const rez = await this.getResource(`/books/${id}`);
         return this._transformBook(rez);
     }
-    async getHouses(id){
+    getHouses = async(id)=>{
         const rez = await this.getResource(`/houses/${id}`);
         return this._transformHouses(rez);
     }
-    _transformCaracter(char){
-        return{
-            name:char.name,
-            gender:char.gender,
-            born:char.born,
-            died:char.died,
-            culture:char.culture
+    isSet = (data) =>{
+        if (data) {
+            return data
+        } else {
+            return 'no data'
         }
     }
-    _transformBook(book){
+    _extractId = (item) => {
+        const arr = item.split('/')
+        return arr[arr.length-1]
+    }
+    _transformCaracter= (char)=>{
         return{
-            name:book.name,
-            numberOfPages:book.numberOfPages,
-            publiser:book.publiser,
-            released:book.released,
-            culture:book.culture
+            id:this._extractId(char.url),
+            name:this.isSet(char.name),
+            gender:this.isSet(char.gender),
+            born:this.isSet(char.born),
+            died:this.isSet(char.died),
+            culture:this.isSet(char.culture)
         }
     }
-    _transformHouses(houses){
+    _transformBook = (book)=>{
         return{
-            name:houses.name,
-            region:houses.region,
-            words:houses.words,
-            titles:houses.titles,
-            overlord:houses.overlord,
-            ancestralWeapons:houses.ancestralWeapons
+            id:this._extractId(book.url),
+            name:this.isSet(book.name),
+            numberOfPages:this.isSet(book.numberOfPages),
+            publiser:this.isSet(book.publiser),
+            released:this.isSet(book.released),
+            culture:this.isSet(book.culture)
+        }
+    }
+    _transformHouses = (houses)=>{
+        return{
+            id:this._extractId(houses.url),
+            name:this.isSet(houses.name),
+            region:this.isSet(houses.region),
+            words:this.isSet(houses.words),
+            titles:this.isSet(houses.titles),
+            overlord:this.isSet(houses.overlord),
+            ancestralWeapons:this.isSet(houses.ancestralWeapons)
         }
     }
 }
